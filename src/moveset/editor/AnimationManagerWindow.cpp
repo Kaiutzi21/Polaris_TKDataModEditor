@@ -721,6 +721,13 @@ void AnimationManagerWindow::LoadSelectedAnim(int cat, int poolIdx)
     if (!ParsePanm(panmBytes, m_currentAnim, err)) return;
 
     m_animLoaded = true;
+    
+    if (m_autoplay && m_currentAnim.totalFrames > 0) {
+        m_playing = true;
+        m_playTime = 0.f;
+        m_currentFrame = 0;
+    }
+
     if (m_preview) {
         EnsurePreviewMeshes(cat);
         m_preview->SetAnimCategory(cat);
@@ -1322,7 +1329,13 @@ bool AnimationManagerWindow::Render()
     // [Extract All Animation] button
     if (ImGui::Button("Extract All Animation"))
         DoExtractAll();
+    //
+    
+    ImGui::SameLine();
 
+    if (ImGui::Checkbox("Autoplay", &m_autoplay))
+        ; // no immediate action needed, autoplay logic is in the frame update
+    
     // Status message
     if (!m_statusMsg.empty())
     {
